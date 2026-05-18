@@ -1,0 +1,156 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  EMPLOYEE
+  CUSTOMER
+}
+
+enum BookingStatus {
+  PENDING
+  CONFIRMED
+  ASSIGNED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum InvoiceStatus {
+  DRAFT
+  SENT
+  PAID
+  OVERDUE
+  VOID
+}
+
+enum NotificationType {
+  BOOKING_CONFIRMATION
+  BOOKING_UPDATE
+  EMPLOYEE_ASSIGNMENT
+  INVOICE_CREATED
+  SYSTEM
+}
+
+model User {
+  id           String         @id @default(uuid())
+  name         String
+  email        String         @unique
+  passwordHash String         @map("password_hash")
+  role         Role           @default(CUSTOMER)
+  createdAt    DateTime       @default(now()) @map("created_at")
+  refreshTokens RefreshToken[]
+  customer     Customer?
+  assignedJobs Booking[]      @relation("EmployeeBookings")
+  notifications Notification[]
+  uploadedFiles File[]
+  auditLogs     AuditLog[]
+
+  @@map("users")
+}
+
+model RefreshToken {
+  id        String   @id @default(uuid())
+  tokenHash String
+  userId    String
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Customer {
+  id             String    @id @default(uuid())
+  userId         String?   @unique
+  companyName    String    @map("company_name")
+  email          String    @unique
+  phone          String?
+  notes          String?
+  createdAt      DateTime  @default(now()) @map("created_at")
+  user           User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  bookings       Booking[]
+
+  @@map("customers")
+}
+
+model Service {
+  id          String    @id @default(uuid())
+  title       String    @unique
+  description String
+  price       Decimal   @db.Decimal(10, 2)
+  active      Boolean   @default(true)
+  bookings    Booking[]
+
+  @@map("services")
+}
+
+model Booking {
+  id          String        @id @default(uuid())
+  customerId  String        @map("customer_id")
+  employeeId  String?       @map("employee_id")
+  serviceId   String?
+  serviceType String        @map("service_type")
+  bookingDate DateTime      @map("booking_date")
+  status      BookingStatus @default(PENDING)
+  notes       String?
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+  customer    Customer      @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  employee    User?         @relation("EmployeeBookings", fields: [employeeId], references: [id], onDelete: SetNull)
+  service     Service?      @relation(fields: [serviceId], references: [id], onDelete: SetNull)
+  invoices    Invoice[]
+  files       File[]
+
+  @@map("bookings")
+}
+
+model Invoice {
+  id        String        @id @default(uuid())
+  bookingId String        @map("booking_id")
+  amount    Decimal       @db.Decimal(10, 2)
+  status    InvoiceStatus @default(DRAFT)
+  createdAt DateTime      @default(now()) @map("created_at")
+  booking   Booking       @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+
+  @@map("invoices")
+}
+
+model Notification {
+  id         String           @id @default(uuid())
+  userId     String           @map("user_id")
+  type       NotificationType
+  message    String
+  readStatus Boolean          @default(false) @map("read_status")
+  createdAt  DateTime         @default(now()) @map("created_at")
+  user       User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("notifications")
+}
+
+model File {
+  id         String   @id @default(uuid())
+  bookingId  String   @map("booking_id")
+  filePath   String   @map("file_path")
+  uploadedBy String   @map("uploaded_by")
+  createdAt  DateTime @default(now()) @map("created_at")
+  booking    Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  uploader   User     @relation(fields: [uploadedBy], references: [id], onDelete: Cascade)
+
+  @@map("files")
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  actorId   String?
+  action    String
+  entity    String
+  entityId  String
+  metadata  Json?
+  createdAt DateTime @default(now())
+  actor     User?    @relation(fields: [actorId], references: [id], onDelete: SetNull)
+}

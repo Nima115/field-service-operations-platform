@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Download, Plus } from "lucide-react";
-import { API_URL, apiFetch, authToken, Booking, Invoice, InvoiceStatus } from "@/lib/api";
+import { API_URL, DEMO_MODE, apiFetch, authToken, Booking, Invoice, InvoiceStatus } from "@/lib/api";
 import { money } from "@/lib/format";
 import { StatusMessage } from "./status-message";
 
@@ -54,6 +54,16 @@ export function InvoicesClient() {
   }
 
   async function downloadPdf(id: string) {
+    if (DEMO_MODE) {
+      const invoice = invoices.find((item) => item.id === id);
+      const blob = new Blob([
+        `Demo invoice export\n\nInvoice: ${id}\nAmount: ${invoice ? money(Number(invoice.amount)) : "N/A"}\nStatus: ${invoice?.status ?? "N/A"}\n`
+      ], { type: "text/plain" });
+      const url = URL.createObjectURL(blob);
+      window.open(url, "_blank");
+      return;
+    }
+
     const token = authToken();
     if (!token) return;
     const response = await fetch(`${API_URL}/invoices/${id}/pdf`, {

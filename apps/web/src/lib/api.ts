@@ -1,4 +1,5 @@
-export const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:4000";
+export const DEMO_MODE = !process.env.NEXT_PUBLIC_API_URL;
+export const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "";
 
 export type Role = "ADMIN" | "EMPLOYEE" | "CUSTOMER";
 export type BookingStatus = "PENDING" | "CONFIRMED" | "ASSIGNED" | "IN_PROGRESS" | "COMPLETED" | "CANCELLED";
@@ -72,11 +73,139 @@ export type AuthResponse = {
 export type Session = AuthResponse;
 
 const sessionKey = "operations-platform.session";
+const demoStoreKey = "operations-platform.demo-store";
+
+const demoUsers: User[] = [
+  { id: "usr-admin", name: "Admin User", email: "admin@demo.local", role: "ADMIN" },
+  { id: "usr-employee", name: "Field Employee", email: "employee@demo.local", role: "EMPLOYEE" },
+  { id: "usr-customer", name: "Customer User", email: "customer@demo.local", role: "CUSTOMER" }
+];
+
+const demoServices: Service[] = [
+  { id: "svc-cleaning", title: "Commercial Cleaning", description: "Scheduled office and retail cleaning", price: 1200 },
+  { id: "svc-hvac", title: "HVAC Maintenance", description: "Inspection, filters, and service checks", price: 1800 },
+  { id: "svc-repair", title: "Emergency Repair", description: "Urgent facilities repair response", price: 2400 }
+];
+
+type DemoStore = {
+  bookings: Booking[];
+  customers: Customer[];
+  invoices: Invoice[];
+  notifications: Notification[];
+};
+
+const initialDemoStore: DemoStore = {
+  bookings: [
+    {
+      id: "BK-1048",
+      serviceType: "Commercial Cleaning",
+      bookingDate: "2026-05-22T08:30:00.000Z",
+      status: "ASSIGNED",
+      customer: { companyName: "Customer Account A", email: "customer-a@example.com" },
+      employee: { id: "usr-employee", name: "Field Employee", email: "employee@demo.local" },
+      notes: "Monthly deep-clean checklist."
+    },
+    {
+      id: "BK-1049",
+      serviceType: "HVAC Maintenance",
+      bookingDate: "2026-05-23T12:00:00.000Z",
+      status: "CONFIRMED",
+      customer: { companyName: "Customer Account B", email: "customer-b@example.com" },
+      employee: null,
+      notes: "Filter stock required."
+    },
+    {
+      id: "BK-1050",
+      serviceType: "Emergency Repair",
+      bookingDate: "2026-05-24T15:00:00.000Z",
+      status: "PENDING",
+      customer: { companyName: "Customer Account C", email: "customer-c@example.com" },
+      employee: null,
+      notes: "Customer requested same-day confirmation."
+    }
+  ],
+  customers: [
+    { id: "cus-a", companyName: "Customer Account A", email: "customer-a@example.com", phone: "+46 70 100 10 10", notes: "Monthly cleaning contract." },
+    { id: "cus-b", companyName: "Customer Account B", email: "customer-b@example.com", phone: "+46 70 200 20 20", notes: "HVAC maintenance every quarter." },
+    { id: "cus-c", companyName: "Customer Account C", email: "customer-c@example.com", phone: "+46 70 300 30 30", notes: "Priority emergency repair customer." }
+  ],
+  invoices: [
+    {
+      id: "INV-2048",
+      bookingId: "BK-1048",
+      amount: 1200,
+      status: "SENT",
+      createdAt: "2026-05-22T12:00:00.000Z",
+      booking: {
+        id: "BK-1048",
+        serviceType: "Commercial Cleaning",
+        bookingDate: "2026-05-22T08:30:00.000Z",
+        status: "ASSIGNED",
+        customer: { companyName: "Customer Account A", email: "customer-a@example.com" }
+      }
+    },
+    {
+      id: "INV-2049",
+      bookingId: "BK-1049",
+      amount: 1800,
+      status: "PAID",
+      createdAt: "2026-05-20T09:00:00.000Z",
+      booking: {
+        id: "BK-1049",
+        serviceType: "HVAC Maintenance",
+        bookingDate: "2026-05-23T12:00:00.000Z",
+        status: "CONFIRMED",
+        customer: { companyName: "Customer Account B", email: "customer-b@example.com" }
+      }
+    }
+  ],
+  notifications: [
+    { id: "not-1", type: "BOOKING_CONFIRMED", message: "HVAC maintenance booking confirmed.", readStatus: false, createdAt: "2026-05-21T10:00:00.000Z" },
+    { id: "not-2", type: "INVOICE_SENT", message: "Invoice INV-2048 is ready for review.", readStatus: true, createdAt: "2026-05-22T12:00:00.000Z" }
+  ]
+};
+
+function clone<T>(value: T): T {
+  return JSON.parse(JSON.stringify(value)) as T;
+}
+
+function demoStore() {
+  if (typeof window === "undefined") return clone(initialDemoStore);
+  const raw = window.localStorage.getItem(demoStoreKey);
+  if (!raw) {
+    const store = clone(initialDemoStore);
+    window.localStorage.setItem(demoStoreKey, JSON.stringify(store));
+    return store;
+  }
+  return JSON.parse(raw) as DemoStore;
+}
+
+function saveDemoStore(store: DemoStore) {
+  if (typeof window !== "undefined") window.localStorage.setItem(demoStoreKey, JSON.stringify(store));
+}
+
+function demoSession(role: Role = "ADMIN"): Session {
+  const user = demoUsers.find((item) => item.role === role) ?? demoUsers[0];
+  return { accessToken: "demo-access-token", refreshToken: "demo-refresh-token", user };
+}
+
+function demoOverview(store: DemoStore): AnalyticsOverview {
+  return {
+    monthlyRevenue: store.invoices.filter((invoice) => invoice.status === "PAID").reduce((sum, invoice) => sum + Number(invoice.amount), 0),
+    completedBookings: store.bookings.filter((booking) => booking.status === "COMPLETED").length,
+    customerGrowth: store.customers.length,
+    serviceTrends: demoServices.map((service) => ({
+      serviceType: service.title,
+      bookings: store.bookings.filter((booking) => booking.serviceType === service.title).length
+    }))
+  };
+}
 
 export function getSession(): Session | null {
   if (typeof window === "undefined") return null;
   const raw = window.localStorage.getItem(sessionKey);
-  return raw ? (JSON.parse(raw) as Session) : null;
+  if (raw) return JSON.parse(raw) as Session;
+  return DEMO_MODE ? demoSession() : null;
 }
 
 export function saveSession(session: Session) {
@@ -88,6 +217,8 @@ export function clearSession() {
 }
 
 export async function apiFetch<T>(path: string, init?: RequestInit & { token?: string }): Promise<T> {
+  if (DEMO_MODE) return demoFetch<T>(path, init);
+
   const headers = new Headers(init?.headers);
   if (!(init?.body instanceof FormData)) {
     headers.set("Content-Type", "application/json");
@@ -112,10 +243,17 @@ export async function apiFetch<T>(path: string, init?: RequestInit & { token?: s
 }
 
 export function authToken() {
-  return getSession()?.accessToken;
+  return getSession()?.accessToken ?? (DEMO_MODE ? "demo-access-token" : undefined);
 }
 
 export async function login(email: string, password: string) {
+  if (DEMO_MODE) {
+    const role = email.includes("employee") ? "EMPLOYEE" : email.includes("customer") ? "CUSTOMER" : "ADMIN";
+    const session = demoSession(role);
+    saveSession(session);
+    return session;
+  }
+
   const session = await apiFetch<AuthResponse>("/auth/login", {
     method: "POST",
     body: JSON.stringify({ email, password })
@@ -131,12 +269,130 @@ export async function register(input: {
   phone?: string;
   password: string;
 }) {
+  if (DEMO_MODE) {
+    const store = demoStore();
+    const customer: Customer = {
+      id: `cus-${Date.now()}`,
+      companyName: input.companyName,
+      email: input.email,
+      phone: input.phone,
+      notes: "Created from demo registration."
+    };
+    store.customers = [customer, ...store.customers];
+    saveDemoStore(store);
+    const session = { ...demoSession("CUSTOMER"), user: { id: `usr-${Date.now()}`, name: input.name, email: input.email, role: "CUSTOMER" as const } };
+    saveSession(session);
+    return session;
+  }
+
   const session = await apiFetch<AuthResponse>("/auth/register", {
     method: "POST",
     body: JSON.stringify({ ...input, role: "CUSTOMER" })
   });
   saveSession(session);
   return session;
+}
+
+async function demoFetch<T>(path: string, init?: RequestInit & { token?: string }): Promise<T> {
+  const store = demoStore();
+  const method = init?.method ?? "GET";
+  const body = typeof init?.body === "string" ? JSON.parse(init.body) : {};
+  const ok = (value: unknown) => Promise.resolve(clone(value) as T);
+
+  if (path === "/auth/me") return ok(getSession()?.user ?? demoSession().user);
+  if (path === "/auth/reset-password/confirm") return ok({ message: "Password updated." });
+  if (path === "/services") return ok(demoServices);
+  if (path === "/users?role=EMPLOYEE") return ok(demoUsers.filter((user) => user.role === "EMPLOYEE"));
+  if (path === "/analytics/overview") return ok(demoOverview(store));
+
+  if (path === "/customers" && method === "GET") {
+    return ok(store.customers.map((customer) => ({
+      ...customer,
+      bookings: store.bookings.filter((booking) => booking.customer?.email === customer.email)
+    })));
+  }
+
+  if (path === "/customers" && method === "POST") {
+    const customer = { id: `cus-${Date.now()}`, ...body, bookings: [] };
+    store.customers = [customer, ...store.customers];
+    saveDemoStore(store);
+    return ok(customer);
+  }
+
+  if (path === "/bookings" && method === "GET") return ok(store.bookings);
+
+  if (path === "/bookings" && method === "POST") {
+    const customer = store.customers.find((item) => item.id === body.customerId) ?? store.customers[0];
+    const booking: Booking = {
+      id: `BK-${Math.floor(1000 + Math.random() * 9000)}`,
+      serviceType: body.serviceType,
+      bookingDate: body.bookingDate,
+      status: "PENDING",
+      customer: { companyName: customer?.companyName ?? "Current customer account", email: customer?.email ?? "customer@demo.local" },
+      employee: null,
+      notes: body.notes
+    };
+    store.bookings = [booking, ...store.bookings];
+    store.notifications = [{ id: `not-${Date.now()}`, type: "BOOKING_CREATED", message: `${booking.serviceType} booking created.`, readStatus: false, createdAt: new Date().toISOString() }, ...store.notifications];
+    saveDemoStore(store);
+    return ok(booking);
+  }
+
+  const bookingMatch = path.match(/^\/bookings\/(.+)$/);
+  if (bookingMatch && method === "PATCH") {
+    store.bookings = store.bookings.map((booking) => {
+      if (booking.id !== bookingMatch[1]) return booking;
+      const employee = body.employeeId ? demoUsers.find((user) => user.id === body.employeeId) : body.employeeId === null ? null : booking.employee;
+      return {
+        ...booking,
+        ...body,
+        employee: employee ? { id: employee.id, name: employee.name, email: employee.email } : employee === null ? null : booking.employee
+      };
+    });
+    saveDemoStore(store);
+    return ok({ success: true });
+  }
+
+  if (bookingMatch && method === "DELETE") {
+    store.bookings = store.bookings.filter((booking) => booking.id !== bookingMatch[1]);
+    saveDemoStore(store);
+    return ok({ success: true });
+  }
+
+  if (path === "/invoices" && method === "GET") return ok(store.invoices);
+
+  if (path === "/invoices" && method === "POST") {
+    const booking = store.bookings.find((item) => item.id === body.bookingId) ?? store.bookings[0];
+    const invoice: Invoice = {
+      id: `INV-${Math.floor(1000 + Math.random() * 9000)}`,
+      bookingId: booking?.id ?? body.bookingId,
+      amount: body.amount,
+      status: body.status ?? "SENT",
+      createdAt: new Date().toISOString(),
+      booking
+    };
+    store.invoices = [invoice, ...store.invoices];
+    saveDemoStore(store);
+    return ok(invoice);
+  }
+
+  const invoiceMatch = path.match(/^\/invoices\/(.+)$/);
+  if (invoiceMatch && method === "PATCH") {
+    store.invoices = store.invoices.map((invoice) => invoice.id === invoiceMatch[1] ? { ...invoice, ...body } : invoice);
+    saveDemoStore(store);
+    return ok({ success: true });
+  }
+
+  if (path === "/notifications" && method === "GET") return ok(store.notifications);
+
+  const notificationMatch = path.match(/^\/notifications\/(.+)\/read$/);
+  if (notificationMatch && method === "PATCH") {
+    store.notifications = store.notifications.map((notification) => notification.id === notificationMatch[1] ? { ...notification, readStatus: true } : notification);
+    saveDemoStore(store);
+    return ok({ success: true });
+  }
+
+  return ok({ message: "Demo action completed." });
 }
 
 export const operationalBookings: Booking[] = [

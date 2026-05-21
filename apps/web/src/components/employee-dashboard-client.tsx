@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Camera, CheckCircle2, ClipboardList } from "lucide-react";
-import { API_URL, apiFetch, authToken, Booking } from "@/lib/api";
+import { API_URL, DEMO_MODE, apiFetch, authToken, Booking } from "@/lib/api";
 import { dateTime } from "@/lib/format";
 import { StatusMessage } from "./status-message";
 
@@ -39,6 +39,11 @@ export function EmployeeDashboardClient() {
   }
 
   async function upload(id: string, file?: File) {
+    if (DEMO_MODE) {
+      if (file) setError(`Demo upload captured for ${id}: ${file.name}`);
+      return;
+    }
+
     const token = authToken();
     if (!token || !file) return;
     const body = new FormData();

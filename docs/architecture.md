@@ -1,8 +1,8 @@
-# Confidential Operations Platform Architecture
+# Field Service Operations Platform Architecture
 
 ## System Context
 
-The platform uses a split frontend/API setup for a confidential facilities-services client. The frontend renders the screens for admins, employees, customers, finance, and leadership. The API handles authentication, business rules, database updates, file metadata, notifications, and reporting totals.
+The platform uses a split frontend/API setup for a facilities-services operating model. The frontend renders the screens for admins, employees, customers, finance, and leadership. The API handles authentication, business rules, database updates, file metadata, notifications, and reporting totals.
 
 ## Architecture Diagram
 

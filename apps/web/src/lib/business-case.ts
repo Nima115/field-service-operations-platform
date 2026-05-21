@@ -1,9 +1,9 @@
 export const clientCase = {
-  client: "Confidential Facilities Client",
+  client: "Regional Facilities Operator",
   sector: "Regional facilities services",
-  project: "Confidential Operations Platform",
+  project: "Field Service Operations Platform",
   challenge:
-    "The client was coordinating bookings, dispatch, job notes, customer history, and invoices through spreadsheets, email, and phone calls.",
+    "The business was coordinating bookings, dispatch, job notes, customer history, and invoices through spreadsheets, email, and phone calls.",
   outcome:
     "The platform centralizes the workflow from customer request to employee assignment, completion evidence, invoicing, and management reporting.",
   metrics: [

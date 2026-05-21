@@ -20,7 +20,7 @@ export default function LandingPage() {
           <div className="max-w-3xl pb-20 text-white">
             <h1 className="text-5xl font-semibold tracking-normal md:text-7xl">Operations Platform</h1>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-white/85">
-              A business operations platform delivered for {clientCase.client}, replacing spreadsheet-driven
+              A business operations platform modeled for {clientCase.client}, replacing spreadsheet-driven
               dispatch, fragmented customer records, and manual invoice follow-up with one secure workspace.
             </p>
             <div className="mt-8 flex flex-wrap gap-3">
@@ -50,8 +50,8 @@ export default function LandingPage() {
       </section>
       <section className="mx-auto grid max-w-7xl gap-6 px-6 py-10 md:grid-cols-3">
         {[
-          ["Client problem", clientCase.challenge],
-          ["Delivered solution", clientCase.outcome],
+          ["Business problem", clientCase.challenge],
+          ["Solution build", clientCase.outcome],
           ["Business outcome", "Reduce coordination time, accelerate invoice turnaround, and give leadership reliable operating metrics."]
         ].map(([title, body]) => (
           <article key={title} className="rounded border border-line bg-white p-5 shadow-panel">
@@ -62,7 +62,7 @@ export default function LandingPage() {
       </section>
       <section className="mx-auto max-w-7xl px-6 pb-12">
         <div className="rounded border border-line bg-white p-5 shadow-panel">
-          <p className="text-xs font-semibold uppercase tracking-wide text-brand">Client business case</p>
+          <p className="text-xs font-semibold uppercase tracking-wide text-brand">Business case</p>
           <h2 className="mt-1 text-xl font-semibold">{clientCase.client}</h2>
           <div className="mt-5 grid gap-4 md:grid-cols-4">
             {clientCase.metrics.map((metric) => (

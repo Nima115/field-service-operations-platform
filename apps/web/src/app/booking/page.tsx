@@ -19,7 +19,7 @@ export default function BookingPage() {
             <CalendarDays className="h-8 w-8 text-brand" />
             <h2 className="mt-4 text-lg font-semibold">Booking confirmation</h2>
             <p className="mt-2 text-sm leading-6 text-slate-600">
-              Confirmed bookings trigger customer email confirmation, admin visibility, and assignment notifications when an employee is selected. This directly addresses the client's old email-and-spreadsheet dispatch process.
+              Confirmed bookings trigger customer email confirmation, admin visibility, and assignment notifications when an employee is selected. This directly addresses the old email-and-spreadsheet dispatch process.
             </p>
           </aside>
         </div>

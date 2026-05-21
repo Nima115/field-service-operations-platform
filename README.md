@@ -1,14 +1,14 @@
-# Confidential Operations Platform
+# Field Service Operations Platform
 
-This is a production-grade fullstack business management platform built for a **confidential facilities-services client** during consulting work. The public demo uses redacted company names while preserving the real product scope: replace fragmented spreadsheets, email dispatching, manual invoice tracking, and disconnected customer records with one secure operations platform.
+This is a production-grade fullstack business management platform framed around a realistic facilities-services operating model. It presents the kind of business problem a consulting engagement might solve: replacing fragmented spreadsheets, email dispatching, manual invoice tracking, and disconnected customer records with one secure operations platform.
 
 It includes JWT authentication, role-based dashboards, booking workflows, CRM records, invoicing, analytics, uploads, notifications, Dockerized infrastructure, CI, and automated tests.
 
 ## Business Case
 
-The client manages cleaning, HVAC maintenance, emergency repairs, and inspections for commercial customers. Before this platform, the company had no reliable single source of truth for bookings, employee assignment, job completion, customer history, or revenue reporting.
+The modeled company manages cleaning, HVAC maintenance, emergency repairs, and inspections for commercial customers. The business problem is a lack of one reliable source of truth for bookings, employee assignment, job completion, customer history, and revenue reporting.
 
-The platform delivers the client solution:
+The platform demonstrates a practical solution:
 
 - Customers book services and track request status.
 - Admins assign employees and monitor unassigned or delayed work.

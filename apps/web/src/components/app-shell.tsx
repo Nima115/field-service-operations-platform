@@ -65,7 +65,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <main className="lg:pl-64">
         <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-line bg-white/95 px-5 backdrop-blur">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-brand">Redacted client workspace</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-brand">Service operations workspace</p>
             <h1 className="text-lg font-semibold">Service operations command center</h1>
           </div>
           <button

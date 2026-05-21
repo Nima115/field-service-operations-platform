@@ -1,12 +1,14 @@
-# Business Case: Confidential Facilities Client
+# Business Case: Field Service Operations Platform
 
-## Client Profile
+## Business Context
 
-The client is a regional facilities-services company serving offices, coworking spaces, retail locations, and light industrial customers. They handle cleaning, HVAC maintenance, emergency repairs, and scheduled inspections across multiple cities. Client and customer names are redacted in this public portfolio version.
+This case is framed around a regional facilities-services company serving offices, coworking spaces, retail locations, and light industrial customers. The company handles cleaning, HVAC maintenance, emergency repairs, and scheduled inspections across multiple cities.
+
+The documentation treats the work as a representative business problem and solution build that can be discussed as comparable to consulting work for a service-based company.
 
 ## Original Problem
 
-Before the platform, the client coordinated work through spreadsheets, email threads, phone calls, and manual invoice tracking. That caused a few recurring problems:
+In the modeled workflow, the company coordinates work through spreadsheets, email threads, phone calls, and manual invoice tracking. That creates a few recurring problems:
 
 - Customers had no self-service booking portal.
 - Dispatchers could not easily see unassigned or delayed work.
@@ -31,7 +33,7 @@ Build a secure web app that keeps bookings, employee assignments, job updates, i
 
 ## What Was Built
 
-The platform gives the client one place to manage the day-to-day service work:
+The platform gives the business one place to manage day-to-day service work:
 
 - Role-based dashboards for admins, employees, and customers
 - Secure authentication with access and refresh tokens
@@ -45,7 +47,7 @@ The platform gives the client one place to manage the day-to-day service work:
 
 ## Success Metrics
 
-The implementation was aimed at these practical outcomes:
+The solution is aimed at these practical outcomes:
 
 - Reduce manual booking coordination by 60%
 - Decrease average assignment time from 4 hours to under 30 minutes

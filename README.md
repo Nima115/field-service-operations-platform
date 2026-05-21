@@ -1,14 +1,14 @@
-# ServiceFlow
+# Confidential Operations Platform
 
-ServiceFlow is a production-grade fullstack business management platform built for **Nordic Service Group**, a regional facilities-services company. The system solves a concrete business case: replace fragmented spreadsheets, email dispatching, manual invoice tracking, and disconnected customer records with one secure operations platform.
+This is a production-grade fullstack business management platform built for a **confidential facilities-services client** during consulting work. The public demo uses redacted company names while preserving the real product scope: replace fragmented spreadsheets, email dispatching, manual invoice tracking, and disconnected customer records with one secure operations platform.
 
 It includes JWT authentication, role-based dashboards, booking workflows, CRM records, invoicing, analytics, uploads, notifications, Dockerized infrastructure, CI, and automated tests.
 
 ## Business Case
 
-Nordic Service Group manages cleaning, HVAC maintenance, emergency repairs, and inspections for commercial customers. Before ServiceFlow, the company had no reliable single source of truth for bookings, employee assignment, job completion, customer history, or revenue reporting.
+The client manages cleaning, HVAC maintenance, emergency repairs, and inspections for commercial customers. Before this platform, the company had no reliable single source of truth for bookings, employee assignment, job completion, customer history, or revenue reporting.
 
-ServiceFlow delivers the client solution:
+The platform delivers the client solution:
 
 - Customers book services and track request status.
 - Admins assign employees and monitor unassigned or delayed work.
@@ -63,9 +63,9 @@ docker compose up --build
 
 | Role | Email | Password |
 | --- | --- | --- |
-| Admin | admin@serviceflow.local | Password123! |
-| Employee | employee@serviceflow.local | Password123! |
-| Customer | customer@serviceflow.local | Password123! |
+| Admin | admin@demo.local | Password123! |
+| Employee | employee@demo.local | Password123! |
+| Customer | customer@demo.local | Password123! |
 
 ## API Overview
 
@@ -101,8 +101,22 @@ API tests use Jest and Supertest. End-to-end booking flow coverage lives in `app
 
 ## Deployment
 
-ServiceFlow is ready for deployment to a VPS, Render, Railway, or DigitalOcean. Configure environment variables from `.env.example`, provision PostgreSQL, run Prisma migrations, then deploy the API and web containers.
+The platform is ready for deployment to a VPS, Render, Railway, or DigitalOcean. Configure environment variables from `.env.example`, provision PostgreSQL, run Prisma migrations, then deploy the API and web containers.
 
 ## Screenshots
 
-Product screenshots are maintained in `docs/screenshots` for release notes, stakeholder reviews, and deployment documentation.
+| Dashboard | Admin |
+| --- | --- |
+| ![Dashboard](docs/screenshots/Dashboard.jpg) | ![Admin dashboard](docs/screenshots/Admin.png) |
+
+| Booking | Employee |
+| --- | --- |
+| ![Booking form](docs/screenshots/Booking.png) | ![Employee jobs](docs/screenshots/Employee.png) |
+
+| CRM | Invoices |
+| --- | --- |
+| ![CRM](docs/screenshots/Crm.png) | ![Invoices](docs/screenshots/Invoices.png) |
+
+| Analytics |
+| --- |
+| ![Analytics](docs/screenshots/Analytics.png) |

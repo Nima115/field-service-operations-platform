@@ -4,11 +4,11 @@ WORKDIR /app
 FROM base AS deps
 COPY package.json package-lock.json* ./
 COPY apps/web/package.json apps/web/package.json
-RUN npm install --workspace @serviceflow/web
+RUN npm install --workspace @operations-platform/web
 
 FROM deps AS build
 COPY apps/web apps/web
-RUN npm run build --workspace @serviceflow/web
+RUN npm run build --workspace @operations-platform/web
 
 FROM base AS runner
 ENV NODE_ENV=production

@@ -10,15 +10,15 @@ export default function LandingPage() {
         <div className="relative mx-auto flex min-h-[92vh] max-w-7xl flex-col justify-between px-6 py-6">
           <nav className="flex items-center justify-between text-white">
             <div className="flex items-center gap-3">
-              <span className="grid h-10 w-10 place-items-center rounded bg-brand font-bold">SF</span>
-              <span className="text-lg font-semibold">ServiceFlow</span>
+              <span className="grid h-10 w-10 place-items-center rounded bg-brand font-bold">OP</span>
+              <span className="text-lg font-semibold">Operations Platform</span>
             </div>
             <Link href="/login" className="focus-ring rounded bg-white px-4 py-2 text-sm font-semibold text-ink">
               Login
             </Link>
           </nav>
           <div className="max-w-3xl pb-20 text-white">
-            <h1 className="text-5xl font-semibold tracking-normal md:text-7xl">ServiceFlow</h1>
+            <h1 className="text-5xl font-semibold tracking-normal md:text-7xl">Operations Platform</h1>
             <p className="mt-6 max-w-2xl text-lg leading-8 text-white/85">
               A business operations platform delivered for {clientCase.client}, replacing spreadsheet-driven
               dispatch, fragmented customer records, and manual invoice follow-up with one secure workspace.

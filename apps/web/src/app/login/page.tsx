@@ -9,8 +9,8 @@ export default function LoginPage() {
       <section className="flex items-center justify-center px-6 py-12">
         <div className="w-full max-w-md">
           <Link href="/" className="mb-8 flex items-center gap-3">
-            <span className="grid h-10 w-10 place-items-center rounded bg-brand font-bold text-white">SF</span>
-            <span className="text-lg font-semibold">ServiceFlow</span>
+            <span className="grid h-10 w-10 place-items-center rounded bg-brand font-bold text-white">OP</span>
+            <span className="text-lg font-semibold">Operations Platform</span>
           </Link>
           <div className="rounded border border-line bg-white p-6 shadow-panel">
             <div className="mb-6 flex items-center gap-3">

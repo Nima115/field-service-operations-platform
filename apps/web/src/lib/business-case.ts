@@ -1,11 +1,11 @@
 export const clientCase = {
-  client: "Nordic Service Group",
+  client: "Confidential Facilities Client",
   sector: "Regional facilities services",
-  project: "ServiceFlow Operations Platform",
+  project: "Confidential Operations Platform",
   challenge:
     "The client was coordinating bookings, dispatch, job notes, customer history, and invoices through spreadsheets, email, and phone calls.",
   outcome:
-    "ServiceFlow centralizes the workflow from customer request to employee assignment, completion evidence, invoicing, and management reporting.",
+    "The platform centralizes the workflow from customer request to employee assignment, completion evidence, invoicing, and management reporting.",
   metrics: [
     { label: "Manual coordination reduction", value: "60%" },
     { label: "Target assignment time", value: "<30 min" },

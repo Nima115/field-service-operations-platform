@@ -66,7 +66,7 @@ export async function buildInvoicePdf(invoiceId: string, user?: Express.User) {
   const chunks: Buffer[] = [];
 
   doc.on("data", (chunk) => chunks.push(chunk as Buffer));
-  doc.fontSize(22).text("ServiceFlow Invoice");
+  doc.fontSize(22).text("Operations Platform Invoice");
   doc.moveDown();
   doc.fontSize(12).text(`Invoice ID: ${invoice.id}`);
   doc.text(`Customer: ${invoice.booking.customer.companyName}`);

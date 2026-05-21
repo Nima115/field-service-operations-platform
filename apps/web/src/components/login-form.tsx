@@ -7,7 +7,7 @@ import { StatusMessage } from "./status-message";
 
 export function LoginForm() {
   const router = useRouter();
-  const [email, setEmail] = useState("admin@serviceflow.local");
+  const [email, setEmail] = useState("admin@demo.local");
   const [password, setPassword] = useState("Password123!");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);

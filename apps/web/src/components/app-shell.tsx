@@ -35,9 +35,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen bg-field text-ink">
       <aside className="fixed inset-y-0 left-0 hidden w-64 border-r border-line bg-white px-4 py-5 lg:block">
         <Link href="/" className="mb-8 flex items-center gap-3 px-2">
-          <span className="grid h-9 w-9 place-items-center rounded bg-brand text-sm font-bold text-white">SF</span>
+          <span className="grid h-9 w-9 place-items-center rounded bg-brand text-sm font-bold text-white">OP</span>
           <span>
-            <span className="block text-base font-semibold">ServiceFlow</span>
+            <span className="block text-base font-semibold">Operations Platform</span>
             <span className="block text-xs text-slate-500">Operations Suite</span>
           </span>
         </Link>
@@ -65,7 +65,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <main className="lg:pl-64">
         <header className="sticky top-0 z-20 flex h-16 items-center justify-between border-b border-line bg-white/95 px-5 backdrop-blur">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-wide text-brand">Client workspace</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-brand">Redacted client workspace</p>
             <h1 className="text-lg font-semibold">Service operations command center</h1>
           </div>
           <button

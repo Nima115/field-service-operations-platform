@@ -53,7 +53,7 @@ export async function register(input: z.infer<typeof registerSchema>) {
   await createNotification({
     userId: user.id,
     type: "SYSTEM",
-    message: "Welcome to ServiceFlow."
+    message: "Welcome to the operations platform."
   });
 
   return issueTokenPair(user);

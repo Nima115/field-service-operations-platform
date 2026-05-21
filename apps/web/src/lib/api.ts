@@ -71,7 +71,7 @@ export type AuthResponse = {
 
 export type Session = AuthResponse;
 
-const sessionKey = "serviceflow.session";
+const sessionKey = "operations-platform.session";
 
 export function getSession(): Session | null {
   if (typeof window === "undefined") return null;
@@ -145,8 +145,8 @@ export const operationalBookings: Booking[] = [
     serviceType: "Commercial Cleaning",
     bookingDate: "2026-05-22T08:30:00.000Z",
     status: "ASSIGNED",
-    customer: { companyName: "Nordic Office AB", email: "ops@nordicoffice.se" },
-    employee: { name: "Jonas Lind", email: "jonas@serviceflow.local" },
+    customer: { companyName: "Customer Account A", email: "customer-a@example.com" },
+    employee: { name: "Field Employee", email: "employee@demo.local" },
     notes: "Monthly deep-clean checklist."
   },
   {
@@ -154,7 +154,7 @@ export const operationalBookings: Booking[] = [
     serviceType: "HVAC Maintenance",
     bookingDate: "2026-05-23T12:00:00.000Z",
     status: "CONFIRMED",
-    customer: { companyName: "Harbor Cowork", email: "facility@harbor.example" },
+    customer: { companyName: "Customer Account B", email: "customer-b@example.com" },
     employee: null,
     notes: "Filter stock required."
   },
@@ -163,7 +163,7 @@ export const operationalBookings: Booking[] = [
     serviceType: "Emergency Repair",
     bookingDate: "2026-05-24T15:00:00.000Z",
     status: "PENDING",
-    customer: { companyName: "Studio North", email: "hello@studionorth.example" },
+    customer: { companyName: "Customer Account C", email: "customer-c@example.com" },
     employee: null,
     notes: "Customer requested same-day confirmation."
   }

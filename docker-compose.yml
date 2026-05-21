@@ -2,15 +2,15 @@ services:
   postgres:
     image: postgres:16-alpine
     environment:
-      POSTGRES_USER: serviceflow
-      POSTGRES_PASSWORD: serviceflow
-      POSTGRES_DB: serviceflow
+      POSTGRES_USER: demo_user
+      POSTGRES_PASSWORD: demo_password
+      POSTGRES_DB: operations_demo
     ports:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U serviceflow"]
+      test: ["CMD-SHELL", "pg_isready -U demo_user"]
       interval: 10s
       timeout: 5s
       retries: 5

@@ -11,9 +11,9 @@ async function main() {
 
   const [admin, employee, customerUser] = await Promise.all(
     [
-      { name: "Amina Berg", email: "admin@serviceflow.local", role: Role.ADMIN },
-      { name: "Jonas Lind", email: "employee@serviceflow.local", role: Role.EMPLOYEE },
-      { name: "Elin at Nordic Office", email: "customer@serviceflow.local", role: Role.CUSTOMER }
+      { name: "Operations Admin", email: "admin@demo.local", role: Role.ADMIN },
+      { name: "Field Employee", email: "employee@demo.local", role: Role.EMPLOYEE },
+      { name: "Customer User", email: "customer@demo.local", role: Role.CUSTOMER }
     ].map((user) =>
       prisma.user.upsert({
         where: { email: user.email },
@@ -24,14 +24,14 @@ async function main() {
   );
 
   const customer = await prisma.customer.upsert({
-    where: { email: "customer@serviceflow.local" },
+    where: { email: "customer@demo.local" },
     update: { userId: customerUser.id },
     create: {
       userId: customerUser.id,
-      companyName: "Nordic Office AB",
-      email: "customer@serviceflow.local",
+      companyName: "Customer Account A",
+      email: "customer@demo.local",
       phone: "+46 70 123 45 67",
-      notes: "Nordic Service Group account. Prefers morning appointments and consolidated monthly invoicing."
+      notes: "Demo customer account. Prefers morning appointments and consolidated monthly invoicing."
     }
   });
 
@@ -73,7 +73,7 @@ async function main() {
     data: {
       userId: admin.id,
       type: "SYSTEM",
-      message: "Seed data loaded for ServiceFlow."
+      message: "Seed data loaded for the demo workspace."
     }
   });
 }

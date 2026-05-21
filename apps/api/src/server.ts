@@ -4,5 +4,5 @@ import { createHttpServer } from "./app.js";
 const { server } = createHttpServer();
 
 server.listen(env.PORT, () => {
-  console.log(`ServiceFlow API listening on port ${env.PORT}`);
+  console.log(`Operations Platform API listening on port ${env.PORT}`);
 });

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "ServiceFlow",
+  title: "Operations Platform",
   description: "Business management platform for service companies"
 };
 

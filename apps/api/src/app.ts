@@ -32,7 +32,7 @@ export function createApp() {
   app.use(rateLimit({ windowMs: 60_000, limit: 120 }));
 
   app.get("/health", (_req, res) => {
-    res.json({ status: "ok", service: "serviceflow-api" });
+    res.json({ status: "ok", service: "operations-api" });
   });
 
   app.use("/auth", authRouter);

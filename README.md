@@ -4,6 +4,8 @@ This is a production-grade fullstack business management platform framed around 
 
 It includes JWT authentication, role-based dashboards, booking workflows, CRM records, invoicing, analytics, uploads, notifications, Dockerized infrastructure, CI, and automated tests.
 
+Live demo: https://field-service-operations-platform-w.vercel.app/
+
 ## Business Case
 
 The modeled company manages cleaning, HVAC maintenance, emergency repairs, and inspections for commercial customers. The business problem is a lack of one reliable source of truth for bookings, employee assignment, job completion, customer history, and revenue reporting.

@@ -3,6 +3,7 @@ import { z } from "zod";
 import { prisma } from "../config/prisma.js";
 import { AppError } from "../utils/http.js";
 import { recordAuditLog } from "./audit.service.js";
+import { bookingActivityInclude, recordBookingActivity } from "./booking-activity.service.js";
 import { createNotification } from "./notification.service.js";
 
 export const createBookingSchema = z.object({
@@ -24,7 +25,11 @@ export const bookingIncludes = {
   employee: { select: { id: true, name: true, email: true, role: true } },
   service: true,
   invoices: true,
-  files: true
+  files: true,
+  activities: {
+    include: bookingActivityInclude,
+    orderBy: { createdAt: "desc" as const }
+  }
 };
 
 export async function createBooking(user: Express.User, input: z.infer<typeof createBookingSchema>) {
@@ -59,6 +64,13 @@ export async function createBooking(user: Express.User, input: z.infer<typeof cr
     entity: "Booking",
     entityId: booking.id,
     metadata: { serviceType: booking.serviceType, status: booking.status }
+  });
+  await recordBookingActivity({
+    bookingId: booking.id,
+    actorId: user.id,
+    action: "Booking created",
+    detail: `${booking.serviceType} scheduled for ${booking.bookingDate.toISOString()}`,
+    metadata: { status: booking.status }
   });
 
   const customer = await prisma.customer.findUnique({
@@ -125,6 +137,34 @@ export async function updateBooking(
     entityId: updated.id,
     metadata: data
   });
+  await Promise.all([
+    data.employeeId !== undefined
+      ? recordBookingActivity({
+          bookingId: updated.id,
+          actorId: user.id,
+          action: data.employeeId ? "Employee assigned" : "Employee unassigned",
+          detail: data.employeeId ? updated.employee?.name ?? "Assigned employee" : "Booking returned to the unassigned queue",
+          metadata: { employeeId: data.employeeId }
+        })
+      : Promise.resolve(),
+    data.status && data.status !== booking.status
+      ? recordBookingActivity({
+          bookingId: updated.id,
+          actorId: user.id,
+          action: "Status changed",
+          detail: `${booking.status} to ${data.status}`,
+          metadata: { from: booking.status, to: data.status }
+        })
+      : Promise.resolve(),
+    data.notes !== undefined && data.notes !== booking.notes
+      ? recordBookingActivity({
+          bookingId: updated.id,
+          actorId: user.id,
+          action: "Notes updated",
+          detail: data.notes || "Notes cleared"
+        })
+      : Promise.resolve()
+  ]);
 
   if (data.employeeId) {
     await createNotification({

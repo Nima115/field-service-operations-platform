@@ -2,6 +2,7 @@ import { Router } from "express";
 import { requireAuth, requireRole } from "../middleware/auth.js";
 import { asyncHandler } from "../utils/http.js";
 import { createBooking, deleteBooking, listBookings, updateBooking } from "../services/booking.service.js";
+import { listBookingActivities } from "../services/booking-activity.service.js";
 
 export const bookingRouter = Router();
 
@@ -18,6 +19,13 @@ bookingRouter.get(
   "/",
   asyncHandler(async (req, res) => {
     res.json(await listBookings(req.user!));
+  })
+);
+
+bookingRouter.get(
+  "/:id/activity",
+  asyncHandler(async (req, res) => {
+    res.json(await listBookingActivities(req.user!, String(req.params.id)));
   })
 );
 

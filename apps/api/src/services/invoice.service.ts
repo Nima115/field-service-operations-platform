@@ -4,6 +4,7 @@ import { z } from "zod";
 import { prisma } from "../config/prisma.js";
 import { AppError } from "../utils/http.js";
 import { recordAuditLog } from "./audit.service.js";
+import { recordBookingActivity } from "./booking-activity.service.js";
 
 export const invoiceSchema = z.object({
   bookingId: z.string().uuid(),
@@ -58,6 +59,13 @@ export async function createInvoice(input: z.infer<typeof invoiceSchema>, user?:
     entityId: invoice.id,
     metadata: { bookingId: booking.id, status: invoice.status, amount: invoice.amount.toString() }
   });
+  await recordBookingActivity({
+    bookingId: booking.id,
+    actorId: user?.id,
+    action: "Invoice created",
+    detail: `${invoice.status} invoice for ${invoice.amount.toString()} SEK`,
+    metadata: { invoiceId: invoice.id, status: invoice.status }
+  });
 
   return invoice;
 }
@@ -82,6 +90,13 @@ export async function updateInvoiceStatus(id: string, status: z.infer<typeof inv
     entity: "Invoice",
     entityId: updated.id,
     metadata: { from: invoice.status, to: status }
+  });
+  await recordBookingActivity({
+    bookingId: updated.bookingId,
+    actorId: user?.id,
+    action: "Invoice status changed",
+    detail: `${invoice.status} to ${status}`,
+    metadata: { invoiceId: updated.id, from: invoice.status, to: status }
   });
 
   return updated;

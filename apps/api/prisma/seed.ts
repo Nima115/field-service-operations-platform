@@ -69,6 +69,32 @@ async function main() {
     }
   });
 
+  await prisma.bookingActivity.createMany({
+    data: [
+      {
+        bookingId: booking.id,
+        actorId: customerUser.id,
+        action: "Booking created",
+        detail: `${booking.serviceType} scheduled for ${booking.bookingDate.toISOString()}`,
+        metadata: { status: "PENDING" }
+      },
+      {
+        bookingId: booking.id,
+        actorId: admin.id,
+        action: "Employee assigned",
+        detail: employee.name,
+        metadata: { employeeId: employee.id }
+      },
+      {
+        bookingId: booking.id,
+        actorId: admin.id,
+        action: "Invoice created",
+        detail: `${invoice.status} invoice for ${invoice.amount.toString()} SEK`,
+        metadata: { invoiceId: invoice.id, status: invoice.status }
+      }
+    ]
+  });
+
   await prisma.auditLog.createMany({
     data: [
       { actorId: admin.id, action: "Admin assigned job", entity: "Booking", entityId: booking.id, metadata: { employee: employee.name } },

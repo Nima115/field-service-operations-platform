@@ -50,6 +50,7 @@ model User {
   assignedJobs Booking[]      @relation("EmployeeBookings")
   notifications Notification[]
   uploadedFiles File[]
+  bookingActivities BookingActivity[]
   auditLogs     AuditLog[]
 
   @@map("users")
@@ -105,6 +106,7 @@ model Booking {
   service     Service?      @relation(fields: [serviceId], references: [id], onDelete: SetNull)
   invoices    Invoice[]
   files       File[]
+  activities  BookingActivity[]
 
   @@map("bookings")
 }
@@ -142,6 +144,20 @@ model File {
   uploader   User     @relation(fields: [uploadedBy], references: [id], onDelete: Cascade)
 
   @@map("files")
+}
+
+model BookingActivity {
+  id        String   @id @default(uuid())
+  bookingId String   @map("booking_id")
+  actorId   String?  @map("actor_id")
+  action    String
+  detail    String?
+  metadata  Json?
+  createdAt DateTime @default(now()) @map("created_at")
+  booking   Booking  @relation(fields: [bookingId], references: [id], onDelete: Cascade)
+  actor     User?    @relation(fields: [actorId], references: [id], onDelete: SetNull)
+
+  @@map("booking_activities")
 }
 
 model AuditLog {

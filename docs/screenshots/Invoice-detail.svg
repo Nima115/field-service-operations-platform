@@ -1,0 +1,16 @@
+﻿<svg width="1280" height="800" viewBox="0 0 1280 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1280" height="800" fill="#f6f8fb"/>
+  <rect x="80" y="70" width="1120" height="120" rx="8" fill="#ffffff" stroke="#d9e1e8"/>
+  <text x="120" y="118" font-family="Arial" font-size="14" font-weight="700" fill="#1f7a6f">INVOICE DETAIL</text>
+  <text x="120" y="154" font-family="Arial" font-size="28" font-weight="700" fill="#172026">Invoice INV-2048</text>
+  <rect x="80" y="230" width="1120" height="360" rx="8" fill="#ffffff" stroke="#d9e1e8"/>
+  <text x="120" y="282" font-family="Arial" font-size="18" font-weight="700" fill="#172026">Lifecycle</text>
+  <rect x="120" y="320" width="120" height="38" rx="6" fill="#e2e8f0"/><text x="158" y="344" font-family="Arial" font-size="14" font-weight="700" fill="#334155">DRAFT</text>
+  <line x1="250" y1="339" x2="360" y2="339" stroke="#94a3b8" stroke-width="3"/>
+  <rect x="370" y="320" width="120" height="38" rx="6" fill="#e0f2fe"/><text x="410" y="344" font-family="Arial" font-size="14" font-weight="700" fill="#0369a1">SENT</text>
+  <line x1="500" y1="339" x2="610" y2="339" stroke="#94a3b8" stroke-width="3"/>
+  <rect x="620" y="320" width="120" height="38" rx="6" fill="#dcfce7"/><text x="660" y="344" font-family="Arial" font-size="14" font-weight="700" fill="#047857">PAID</text>
+  <text x="120" y="430" font-family="Arial" font-size="16" fill="#172026">Customer Account A - Commercial Cleaning</text>
+  <text x="120" y="470" font-family="Arial" font-size="32" font-weight="700" fill="#172026">1 200 SEK</text>
+  <rect x="120" y="520" width="112" height="38" rx="6" fill="#1f7a6f"/><text x="145" y="544" font-family="Arial" font-size="14" font-weight="700" fill="#ffffff">Export PDF</text>
+</svg>

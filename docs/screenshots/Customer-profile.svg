@@ -1,0 +1,20 @@
+﻿<svg width="1280" height="800" viewBox="0 0 1280 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1280" height="800" fill="#f6f8fb"/>
+  <rect x="80" y="70" width="1120" height="120" rx="8" fill="#ffffff" stroke="#d9e1e8"/>
+  <text x="120" y="118" font-family="Arial" font-size="14" font-weight="700" fill="#1f7a6f">CUSTOMER PROFILE</text>
+  <text x="120" y="154" font-family="Arial" font-size="28" font-weight="700" fill="#172026">Customer Account A</text>
+  <rect x="80" y="230" width="520" height="430" rx="8" fill="#ffffff" stroke="#d9e1e8"/>
+  <text x="120" y="282" font-family="Arial" font-size="18" font-weight="700" fill="#172026">Contact</text>
+  <text x="120" y="328" font-family="Arial" font-size="15" fill="#475569">customer-a@example.com</text>
+  <text x="120" y="365" font-family="Arial" font-size="15" fill="#475569">+46 70 100 10 10</text>
+  <text x="120" y="420" font-family="Arial" font-size="18" font-weight="700" fill="#172026">Notes</text>
+  <text x="120" y="456" font-family="Arial" font-size="15" fill="#475569">Monthly cleaning contract and morning access preference.</text>
+  <rect x="640" y="230" width="560" height="430" rx="8" fill="#ffffff" stroke="#d9e1e8"/>
+  <text x="680" y="282" font-family="Arial" font-size="18" font-weight="700" fill="#172026">Booking history</text>
+  <rect x="680" y="320" width="460" height="72" rx="6" fill="#f8fafc" stroke="#d9e1e8"/>
+  <text x="704" y="350" font-family="Arial" font-size="15" font-weight="700" fill="#172026">Commercial Cleaning</text>
+  <text x="704" y="374" font-family="Arial" font-size="13" fill="#64748b">Assigned - invoice sent</text>
+  <rect x="680" y="416" width="460" height="72" rx="6" fill="#f8fafc" stroke="#d9e1e8"/>
+  <text x="704" y="446" font-family="Arial" font-size="15" font-weight="700" fill="#172026">Emergency Repair</text>
+  <text x="704" y="470" font-family="Arial" font-size="13" fill="#64748b">Completed - paid</text>
+</svg>

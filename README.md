@@ -1,4 +1,4 @@
-# Field Service Operations Platform
+﻿# Field Service Operations Platform
 
 This is a production-grade fullstack business management platform framed around a realistic facilities-services operating model. It presents the kind of business problem a consulting engagement might solve: replacing fragmented spreadsheets, email dispatching, manual invoice tracking, and disconnected customer records with one secure operations platform.
 
@@ -28,6 +28,13 @@ Detailed case documentation lives in [docs/business-case.md](docs/business-case.
 - `.github/workflows/ci.yml`: install, typecheck, lint, test, and build pipeline
 - `docker-compose.yml`: PostgreSQL, API, and frontend services
 
+
+## Architecture Decisions
+
+- PostgreSQL is used as the primary database because bookings, invoices, customers, assignments, notifications, and audit logs are relational workflows. Foreign keys and transactions keep operational records consistent as jobs move from booking to completion to invoicing.
+- JWT access and refresh tokens keep the API stateless while still supporting role-scoped dashboards for admins, employees, and customers. Short-lived access tokens limit exposure, while refresh tokens allow practical session continuity.
+- Docker is included so the web app, API, and PostgreSQL service can be started the same way in local development, CI-like checks, and production-style deployment environments.
+- Roles are modeled directly in the data layer because the product has different operational surfaces: admins dispatch and invoice, employees complete assigned work, and customers manage their own bookings and invoices.
 ## Core Capabilities
 
 - Admin, employee, and customer roles
@@ -122,3 +129,4 @@ The platform is ready for deployment to a VPS, Render, Railway, or DigitalOcean.
 | Analytics |
 | --- |
 | ![Analytics](docs/screenshots/Analytics.png) |
+

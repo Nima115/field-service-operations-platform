@@ -1,0 +1,25 @@
+﻿<svg width="1280" height="800" viewBox="0 0 1280 800" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1280" height="800" fill="#f6f8fb"/>
+  <rect x="0" y="0" width="260" height="800" fill="#ffffff" stroke="#d9e1e8"/>
+  <rect x="32" y="32" width="42" height="42" rx="6" fill="#1f7a6f"/>
+  <text x="88" y="58" font-family="Arial" font-size="18" font-weight="700" fill="#172026">Operations Platform</text>
+  <rect x="300" y="48" width="900" height="72" rx="8" fill="#ffffff" stroke="#d9e1e8"/>
+  <text x="330" y="83" font-family="Arial" font-size="14" font-weight="700" fill="#1f7a6f">BOOKING DETAIL</text>
+  <text x="330" y="108" font-family="Arial" font-size="24" font-weight="700" fill="#172026">Emergency Repair - Customer Account C</text>
+  <rect x="300" y="152" width="560" height="540" rx="8" fill="#ffffff" stroke="#d9e1e8"/>
+  <text x="330" y="194" font-family="Arial" font-size="18" font-weight="700" fill="#172026">Operational state</text>
+  <rect x="330" y="220" width="94" height="30" rx="5" fill="#fff7ed"/><text x="346" y="240" font-family="Arial" font-size="13" font-weight="700" fill="#c2410c">Delayed</text>
+  <rect x="438" y="220" width="116" height="30" rx="5" fill="#f1f5f9"/><text x="454" y="240" font-family="Arial" font-size="13" font-weight="700" fill="#334155">Unassigned</text>
+  <line x1="330" y1="300" x2="800" y2="300" stroke="#d9e1e8"/>
+  <text x="330" y="342" font-family="Arial" font-size="18" font-weight="700" fill="#172026">Activity timeline</text>
+  <circle cx="350" cy="390" r="16" fill="#e2e8f0"/><text x="382" y="396" font-family="Arial" font-size="15" font-weight="700" fill="#172026">Booking created</text>
+  <text x="382" y="418" font-family="Arial" font-size="13" fill="#64748b">Customer requested same-day confirmation</text>
+  <circle cx="350" cy="470" r="16" fill="#e2e8f0"/><text x="382" y="476" font-family="Arial" font-size="15" font-weight="700" fill="#172026">Status pending</text>
+  <text x="382" y="498" font-family="Arial" font-size="13" fill="#64748b">Awaiting dispatch assignment</text>
+  <circle cx="350" cy="550" r="16" fill="#e2e8f0"/><text x="382" y="556" font-family="Arial" font-size="15" font-weight="700" fill="#172026">Invoice pending</text>
+  <text x="382" y="578" font-family="Arial" font-size="13" fill="#64748b">Finance waits for completed work</text>
+  <rect x="900" y="152" width="300" height="540" rx="8" fill="#ffffff" stroke="#d9e1e8"/>
+  <text x="930" y="194" font-family="Arial" font-size="18" font-weight="700" fill="#172026">Audit activity</text>
+  <text x="930" y="238" font-family="Arial" font-size="14" font-weight="700" fill="#172026">Admin assigned job</text>
+  <text x="930" y="262" font-family="Arial" font-size="13" fill="#64748b">Operations Admin</text>
+</svg>

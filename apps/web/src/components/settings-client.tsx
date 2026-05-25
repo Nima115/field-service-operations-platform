@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import { Bell, Globe2, Moon, UserCog } from "lucide-react";
@@ -14,6 +14,7 @@ export function SettingsClient() {
 
   useEffect(() => {
     const session = getSession();
+    setDark(window.localStorage.getItem("operations-platform.theme") === "dark");
     setUser(session?.user ?? null);
     setEmail(session?.user.email ?? "");
     const token = authToken();
@@ -22,6 +23,7 @@ export function SettingsClient() {
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", dark);
+    window.localStorage.setItem("operations-platform.theme", dark ? "dark" : "light");
   }, [dark]);
 
   async function resetPassword(event: React.FormEvent) {
@@ -75,3 +77,4 @@ export function SettingsClient() {
     </div>
   );
 }
+

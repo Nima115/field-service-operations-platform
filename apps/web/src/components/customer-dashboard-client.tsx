@@ -1,4 +1,4 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import { CalendarPlus, FileText, MessageSquareText } from "lucide-react";
@@ -6,18 +6,21 @@ import Link from "next/link";
 import { apiFetch, authToken, Booking, Invoice, Notification } from "@/lib/api";
 import { BookingTable } from "./booking-table";
 import { StatCard } from "./stat-card";
+import { EmptyState, LoadingState } from "./booking-operations";
 import { StatusMessage } from "./status-message";
 
 export function CustomerDashboardClient() {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [invoices, setInvoices] = useState<Invoice[]>([]);
   const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   async function load() {
     const token = authToken();
-    if (!token) return setError("Login as customer to view account activity.");
+    if (!token) { setLoading(false); return setError("Login as customer to view account activity."); }
     try {
+      setLoading(true);
       const [bookingRows, invoiceRows, notificationRows] = await Promise.all([
         apiFetch<Booking[]>("/bookings", { token }),
         apiFetch<Invoice[]>("/invoices", { token }),
@@ -28,6 +31,8 @@ export function CustomerDashboardClient() {
       setNotifications(notificationRows);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unable to load customer dashboard");
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -53,10 +58,11 @@ export function CustomerDashboardClient() {
       <div className="flex justify-end">
         <Link href="/booking" className="focus-ring rounded bg-brand px-4 py-2 text-sm font-semibold text-white">New booking</Link>
       </div>
-      <BookingTable bookings={bookings} />
+      {loading ? <LoadingState label="Loading customer activity" /> : <BookingTable bookings={bookings} />}
       <div className="rounded border border-line bg-white p-5 shadow-panel">
         <h2 className="text-lg font-semibold">Notifications</h2>
         <div className="mt-3 space-y-2">
+          {!loading && !notifications.length ? <EmptyState title="No notifications" message="Booking updates and invoice messages will appear here." /> : null}
           {notifications.map((notification) => (
             <button key={notification.id} onClick={() => markRead(notification.id)} className="focus-ring block w-full rounded border border-line px-3 py-2 text-left text-sm hover:bg-slate-50">
               <span className="font-medium">{notification.message}</span>
@@ -68,3 +74,5 @@ export function CustomerDashboardClient() {
     </div>
   );
 }
+
+

@@ -1,22 +1,27 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import { Camera, CheckCircle2, ClipboardList } from "lucide-react";
 import { API_URL, DEMO_MODE, apiFetch, authToken, Booking } from "@/lib/api";
 import { dateTime } from "@/lib/format";
+import { EmptyState, LoadingState } from "./booking-operations";
 import { StatusMessage } from "./status-message";
 
 export function EmployeeDashboardClient() {
   const [bookings, setBookings] = useState<Booking[]>([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   async function load() {
     const token = authToken();
-    if (!token) return setError("Login as employee to view assigned jobs.");
+    if (!token) { setLoading(false); return setError("Login as employee to view assigned jobs."); }
     try {
+      setLoading(true);
       setBookings(await apiFetch<Booking[]>("/bookings", { token }));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unable to load jobs");
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -57,6 +62,8 @@ export function EmployeeDashboardClient() {
   return (
     <div className="grid gap-4 xl:grid-cols-3">
       {error ? <div className="xl:col-span-3"><StatusMessage tone="error" message={error} /></div> : null}
+      {loading ? <div className="xl:col-span-3"><LoadingState label="Loading assigned jobs" /></div> : null}
+      {!loading && !bookings.length ? <div className="xl:col-span-3"><EmptyState title="No assigned jobs" message="New assignments will appear here when dispatch assigns work." /></div> : null}
       {bookings.map((booking) => (
         <article key={booking.id} className="rounded border border-line bg-white p-5 shadow-panel">
           <div className="flex items-start justify-between gap-4">
@@ -90,3 +97,5 @@ export function EmployeeDashboardClient() {
     </div>
   );
 }
+
+

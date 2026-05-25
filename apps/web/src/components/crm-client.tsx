@@ -1,22 +1,27 @@
-"use client";
+﻿"use client";
 
 import { useEffect, useState } from "react";
 import { Mail, Phone, Plus, StickyNote } from "lucide-react";
 import { apiFetch, authToken, Customer } from "@/lib/api";
+import { EmptyState, LoadingState } from "./booking-operations";
 import { StatusMessage } from "./status-message";
 
 export function CrmClient() {
   const [customers, setCustomers] = useState<Customer[]>([]);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [form, setForm] = useState({ companyName: "", email: "", phone: "", notes: "" });
 
   async function load() {
     const token = authToken();
-    if (!token) return setError("Login as admin or employee to view CRM records.");
+    if (!token) { setLoading(false); return setError("Login as admin or employee to view CRM records."); }
     try {
+      setLoading(true);
       setCustomers(await apiFetch<Customer[]>("/customers", { token }));
     } catch (err) {
       setError(err instanceof Error ? err.message : "Unable to load customers");
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -45,6 +50,8 @@ export function CrmClient() {
           <Plus className="h-4 w-4" /> Add
         </button>
       </form>
+      {loading ? <LoadingState label="Loading customer profiles" /> : null}
+      {!loading && !customers.length ? <EmptyState title="No customer profiles" message="Add the first customer account to start building the CRM." /> : null}
       <div className="grid gap-4 xl:grid-cols-3">
         {customers.map((customer) => (
           <article key={customer.id} className="rounded border border-line bg-white p-5 shadow-panel">
@@ -61,3 +68,5 @@ export function CrmClient() {
     </div>
   );
 }
+
+

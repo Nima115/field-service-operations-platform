@@ -1,4 +1,4 @@
-@tailwind base;
+﻿@tailwind base;
 @tailwind components;
 @tailwind utilities;
 
@@ -27,4 +27,61 @@ textarea {
 
 .focus-ring {
   @apply focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-brand;
+}
+
+.dark {
+  color-scheme: dark;
+  background: #0f172a;
+  color: #e2e8f0;
+}
+
+.dark body,
+.dark .bg-field {
+  background: #0f172a;
+  color: #e2e8f0;
+}
+
+.dark .bg-white {
+  background-color: #111827;
+}
+
+.dark .bg-slate-50 {
+  background-color: #1e293b;
+}
+
+.dark .bg-slate-100 {
+  background-color: #334155;
+}
+
+.dark .text-ink {
+  color: #e2e8f0;
+}
+
+.dark .text-slate-600,
+.dark .text-slate-700 {
+  color: #cbd5e1;
+}
+
+.dark .text-slate-500 {
+  color: #94a3b8;
+}
+
+.dark .border-line {
+  border-color: #334155;
+}
+
+.dark input,
+.dark select,
+.dark textarea {
+  background-color: #020617;
+  color: #e2e8f0;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: #64748b;
+}
+
+.dark .shadow-panel {
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.28);
 }

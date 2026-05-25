@@ -2,22 +2,13 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { CalendarCheck, CircleDollarSign, ClipboardCheck, SlidersHorizontal, Trash2, Users } from "lucide-react";
-import { AnalyticsOverview, apiFetch, authToken, Booking, BookingStatus, User } from "@/lib/api";
+import { AnalyticsOverview, apiFetch, authToken, AuditLog, Booking, BookingStatus, User } from "@/lib/api";
 import { dateTime, money } from "@/lib/format";
 import { BookingActivityTimeline, BookingStatusBadge, EmptyState, LoadingState, OperationalBadges, bookingOperationalBadges } from "./booking-operations";
 import { StatCard } from "./stat-card";
 import { StatusMessage } from "./status-message";
 
 type SortKey = "bookingDate" | "customer" | "status";
-type AuditLog = {
-  id: string;
-  action: string;
-  entity: string;
-  entityId: string;
-  createdAt: string;
-  actor?: { name: string } | null;
-};
-
 const statuses: BookingStatus[] = ["PENDING", "CONFIRMED", "ASSIGNED", "IN_PROGRESS", "COMPLETED", "CANCELLED"];
 
 export function AdminDashboardClient() {
@@ -184,21 +175,47 @@ export function AdminDashboardClient() {
                 <div className="mt-5 border-t border-line pt-5"><BookingActivityTimeline booking={selectedBooking} /></div>
               </article>
             ) : null}
-            <article className="rounded border border-line bg-white p-5 shadow-panel dark:bg-slate-900">
-              <p className="text-xs font-semibold uppercase tracking-wide text-brand">Audit logs</p>
-              <div className="mt-4 space-y-3">
-                {auditLogs.slice(0, 5).map((log) => (
-                  <div key={log.id} className="border-b border-line pb-3 last:border-0 last:pb-0">
-                    <p className="text-sm font-semibold">{log.action}</p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">{log.actor?.name ?? "System"} - {log.entity} {log.entityId.slice(0, 8)}</p>
-                    <p className="text-xs text-slate-500 dark:text-slate-400">{dateTime(log.createdAt)}</p>
-                  </div>
-                ))}
-                {!auditLogs.length ? <p className="text-sm text-slate-500 dark:text-slate-400">No audit activity recorded yet.</p> : null}
-              </div>
-            </article>
           </aside>
         </div>
+      ) : null}
+
+      {!loading ? (
+        <section className="rounded border border-line bg-white p-5 shadow-panel dark:bg-slate-900">
+          <div className="flex flex-wrap items-end justify-between gap-3">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wide text-brand">Admin audit view</p>
+              <h2 className="mt-1 text-lg font-semibold">Workspace audit log</h2>
+            </div>
+            <p className="text-sm text-slate-500 dark:text-slate-400">{auditLogs.length} recent events</p>
+          </div>
+          {!auditLogs.length ? <div className="mt-4"><EmptyState title="No audit activity recorded" message="Assignments, booking updates, and invoice status changes will appear here." /></div> : null}
+          {auditLogs.length ? (
+            <div className="mt-4 overflow-hidden rounded border border-line">
+              <table className="w-full min-w-[760px] text-left text-sm">
+                <thead className="bg-slate-50 text-xs uppercase tracking-wide text-slate-500 dark:bg-slate-800 dark:text-slate-300">
+                  <tr>
+                    <th className="px-4 py-3">Action</th>
+                    <th className="px-4 py-3">Actor</th>
+                    <th className="px-4 py-3">Entity</th>
+                    <th className="px-4 py-3">Metadata</th>
+                    <th className="px-4 py-3">Time</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-line">
+                  {auditLogs.map((log) => (
+                    <tr key={log.id}>
+                      <td className="px-4 py-4 font-medium">{log.action}</td>
+                      <td className="px-4 py-4">{log.actor?.name ?? "System"}</td>
+                      <td className="px-4 py-4">{log.entity} {log.entityId.slice(0, 8)}</td>
+                      <td className="px-4 py-4 text-xs text-slate-500 dark:text-slate-400">{log.metadata ? JSON.stringify(log.metadata) : "No metadata"}</td>
+                      <td className="px-4 py-4">{dateTime(log.createdAt)}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ) : null}
+        </section>
       ) : null}
     </div>
   );

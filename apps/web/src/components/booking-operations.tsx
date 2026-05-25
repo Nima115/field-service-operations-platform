@@ -1,4 +1,4 @@
-﻿import { AlertTriangle, CalendarClock, CircleDollarSign, ClipboardList, UserX } from "lucide-react";
+import { AlertTriangle, CalendarClock, CircleDollarSign, ClipboardList, FileText, UserX } from "lucide-react";
 import { dateTime } from "@/lib/format";
 import type { Booking } from "@/lib/api";
 
@@ -51,17 +51,26 @@ export function OperationalBadges({ booking }: { booking: Booking }) {
 }
 
 export function BookingActivityTimeline({ booking }: { booking: Booking }) {
-  const withDates = booking as Booking & { createdAt?: string; updatedAt?: string };
-  const events = [
-    { label: "Booking created", detail: booking.customer?.companyName ?? "Customer request", at: withDates.createdAt, icon: ClipboardList },
-    booking.employee ? { label: "Admin assigned job", detail: booking.employee.name, at: withDates.updatedAt, icon: UserX } : null,
-    { label: `Status ${booking.status.replace("_", " ").toLowerCase()}`, detail: booking.serviceType, at: withDates.updatedAt ?? booking.bookingDate, icon: CalendarClock },
+  const storedEvents = (booking.activities ?? []).map((activity) => ({
+    label: activity.action,
+    detail: activity.detail ?? activity.actor?.name ?? "Workspace activity",
+    at: activity.createdAt,
+    actor: activity.actor?.name,
+    icon: activity.action.includes("Invoice") ? CircleDollarSign : activity.action.includes("assigned") ? UserX : activity.action.includes("Notes") ? FileText : ClipboardList
+  }));
+
+  const fallbackEvents = [
+    { label: "Booking created", detail: booking.customer?.companyName ?? "Customer request", at: booking.createdAt, icon: ClipboardList },
+    booking.employee ? { label: "Employee assigned", detail: booking.employee.name, at: booking.updatedAt, icon: UserX } : null,
+    { label: `Status ${booking.status.replace("_", " ").toLowerCase()}`, detail: booking.serviceType, at: booking.updatedAt ?? booking.bookingDate, icon: CalendarClock },
     ...(booking.invoices ?? []).map((invoice) => ({ label: `Invoice ${invoice.status.toLowerCase()}`, detail: `Invoice ${invoice.id.slice(0, 8)}`, at: invoice.createdAt, icon: CircleDollarSign })),
     ...(booking.files ?? []).map((file) => ({ label: "Field file uploaded", detail: file.filePath, at: file.createdAt, icon: AlertTriangle }))
-  ].filter(Boolean) as Array<{ label: string; detail: string; at?: string; icon: typeof ClipboardList }>;
+  ].filter(Boolean) as Array<{ label: string; detail: string; at?: string; actor?: string; icon: typeof ClipboardList }>;
+  const events = (storedEvents.length ? storedEvents : fallbackEvents).sort((a, b) => new Date(b.at ?? 0).getTime() - new Date(a.at ?? 0).getTime());
 
   return (
     <div className="space-y-3">
+      {!events.length ? <p className="text-sm text-slate-500 dark:text-slate-400">No activity has been recorded for this booking yet.</p> : null}
       {events.map((event, index) => {
         const Icon = event.icon;
         return (
@@ -72,6 +81,7 @@ export function BookingActivityTimeline({ booking }: { booking: Booking }) {
             <div>
               <p className="text-sm font-semibold">{event.label}</p>
               <p className="text-xs text-slate-500 dark:text-slate-400">{event.detail}</p>
+              {event.actor ? <p className="text-xs text-slate-500 dark:text-slate-400">By {event.actor}</p> : null}
               {event.at ? <p className="text-xs text-slate-500 dark:text-slate-400">{dateTime(event.at)}</p> : null}
             </div>
           </div>

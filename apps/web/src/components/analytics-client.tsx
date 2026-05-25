@@ -4,21 +4,29 @@ import { useEffect, useState } from "react";
 import { Bar, BarChart, CartesianGrid, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { AnalyticsOverview, apiFetch, authToken } from "@/lib/api";
 import { StatusMessage } from "./status-message";
+import { EmptyState, LoadingState } from "./booking-operations";
 
 export function AnalyticsClient() {
   const [overview, setOverview] = useState<AnalyticsOverview | null>(null);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
     const token = authToken();
     if (!token) {
+      setLoading(false);
       setError("Login as admin to view analytics.");
       return;
     }
-    apiFetch<AnalyticsOverview>("/analytics/overview", { token }).then(setOverview).catch((err) => setError(err instanceof Error ? err.message : "Unable to load analytics"));
+    apiFetch<AnalyticsOverview>("/analytics/overview", { token })
+      .then(setOverview)
+      .catch((err) => setError(err instanceof Error ? err.message : "Unable to load analytics"))
+      .finally(() => setLoading(false));
   }, []);
 
   if (error) return <StatusMessage tone="error" message={error} />;
+  if (loading) return <LoadingState label="Loading analytics dashboard" />;
+  if (!overview?.serviceTrends.length) return <EmptyState title="No analytics yet" message="Revenue, completed jobs, and service trends will appear once bookings and invoices are active." />;
 
   return (
     <div className="rounded border border-line bg-white p-5 shadow-panel">

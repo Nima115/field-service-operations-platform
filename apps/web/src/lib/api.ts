@@ -18,10 +18,23 @@ export type Booking = {
   bookingDate: string;
   status: BookingStatus;
   notes?: string;
+  createdAt?: string;
+  updatedAt?: string;
   customer?: { companyName: string; email: string };
   employee?: { id?: string; name: string; email: string } | null;
   invoices?: Invoice[];
   files?: { id: string; filePath: string; createdAt: string }[];
+  activities?: BookingActivity[];
+};
+
+export type BookingActivity = {
+  id: string;
+  bookingId: string;
+  action: string;
+  detail?: string | null;
+  metadata?: Record<string, unknown> | null;
+  createdAt: string;
+  actor?: User | null;
 };
 
 export type Service = {
@@ -55,6 +68,16 @@ export type Notification = {
   message: string;
   readStatus: boolean;
   createdAt: string;
+};
+
+export type AuditLog = {
+  id: string;
+  action: string;
+  entity: string;
+  entityId: string;
+  metadata?: Record<string, unknown> | null;
+  createdAt: string;
+  actor?: User | null;
 };
 
 export type AnalyticsOverview = {
@@ -92,6 +115,7 @@ type DemoStore = {
   customers: Customer[];
   invoices: Invoice[];
   notifications: Notification[];
+  auditLogs: AuditLog[];
 };
 
 const initialDemoStore: DemoStore = {
@@ -101,27 +125,44 @@ const initialDemoStore: DemoStore = {
       serviceType: "Commercial Cleaning",
       bookingDate: "2026-05-22T08:30:00.000Z",
       status: "ASSIGNED",
+      createdAt: "2026-05-20T08:00:00.000Z",
+      updatedAt: "2026-05-21T10:00:00.000Z",
       customer: { companyName: "Customer Account A", email: "customer-a@example.com" },
       employee: { id: "usr-employee", name: "Field Employee", email: "employee@demo.local" },
-      notes: "Monthly deep-clean checklist."
+      notes: "Monthly deep-clean checklist.",
+      activities: [
+        { id: "act-1", bookingId: "BK-1048", action: "Booking created", detail: "Commercial Cleaning scheduled", createdAt: "2026-05-20T08:00:00.000Z", actor: demoUsers[2] },
+        { id: "act-2", bookingId: "BK-1048", action: "Employee assigned", detail: "Field Employee", createdAt: "2026-05-21T10:00:00.000Z", actor: demoUsers[0] }
+      ]
     },
     {
       id: "BK-1049",
       serviceType: "HVAC Maintenance",
       bookingDate: "2026-05-23T12:00:00.000Z",
       status: "CONFIRMED",
+      createdAt: "2026-05-21T09:00:00.000Z",
+      updatedAt: "2026-05-21T09:30:00.000Z",
       customer: { companyName: "Customer Account B", email: "customer-b@example.com" },
       employee: null,
-      notes: "Filter stock required."
+      notes: "Filter stock required.",
+      activities: [
+        { id: "act-3", bookingId: "BK-1049", action: "Booking created", detail: "HVAC Maintenance scheduled", createdAt: "2026-05-21T09:00:00.000Z", actor: demoUsers[2] },
+        { id: "act-4", bookingId: "BK-1049", action: "Status changed", detail: "PENDING to CONFIRMED", createdAt: "2026-05-21T09:30:00.000Z", actor: demoUsers[0] }
+      ]
     },
     {
       id: "BK-1050",
       serviceType: "Emergency Repair",
       bookingDate: "2026-05-24T15:00:00.000Z",
       status: "PENDING",
+      createdAt: "2026-05-22T14:30:00.000Z",
+      updatedAt: "2026-05-22T14:30:00.000Z",
       customer: { companyName: "Customer Account C", email: "customer-c@example.com" },
       employee: null,
-      notes: "Customer requested same-day confirmation."
+      notes: "Customer requested same-day confirmation.",
+      activities: [
+        { id: "act-5", bookingId: "BK-1050", action: "Booking created", detail: "Emergency Repair scheduled", createdAt: "2026-05-22T14:30:00.000Z", actor: demoUsers[2] }
+      ]
     }
   ],
   customers: [
@@ -162,6 +203,10 @@ const initialDemoStore: DemoStore = {
   notifications: [
     { id: "not-1", type: "BOOKING_CONFIRMED", message: "HVAC maintenance booking confirmed.", readStatus: false, createdAt: "2026-05-21T10:00:00.000Z" },
     { id: "not-2", type: "INVOICE_SENT", message: "Invoice INV-2048 is ready for review.", readStatus: true, createdAt: "2026-05-22T12:00:00.000Z" }
+  ],
+  auditLogs: [
+    { id: "aud-1", action: "Admin assigned job", entity: "Booking", entityId: "BK-1048", createdAt: "2026-05-21T10:00:00.000Z", actor: demoUsers[0], metadata: { employee: "Field Employee" } },
+    { id: "aud-2", action: "Invoice generated", entity: "Invoice", entityId: "INV-2048", createdAt: "2026-05-22T12:00:00.000Z", actor: demoUsers[0], metadata: { status: "SENT" } }
   ]
 };
 
@@ -199,6 +244,36 @@ function demoOverview(store: DemoStore): AnalyticsOverview {
       bookings: store.bookings.filter((booking) => booking.serviceType === service.title).length
     }))
   };
+}
+
+function appendBookingActivity(store: DemoStore, bookingId: string, activity: Omit<BookingActivity, "id" | "bookingId" | "createdAt">) {
+  const nextActivity: BookingActivity = {
+    ...activity,
+    id: `act-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+    bookingId,
+    createdAt: new Date().toISOString()
+  };
+
+  store.bookings = store.bookings.map((booking) =>
+    booking.id === bookingId
+      ? {
+          ...booking,
+          updatedAt: nextActivity.createdAt,
+          activities: [nextActivity, ...(booking.activities ?? [])]
+        }
+      : booking
+  );
+}
+
+function appendAuditLog(store: DemoStore, log: Omit<AuditLog, "id" | "createdAt">) {
+  store.auditLogs = [
+    {
+      ...log,
+      id: `aud-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+      createdAt: new Date().toISOString()
+    },
+    ...store.auditLogs
+  ];
 }
 
 export function getSession(): Session | null {
@@ -304,6 +379,7 @@ async function demoFetch<T>(path: string, init?: RequestInit & { token?: string 
   if (path === "/services") return ok(demoServices);
   if (path === "/users?role=EMPLOYEE") return ok(demoUsers.filter((user) => user.role === "EMPLOYEE"));
   if (path === "/analytics/overview") return ok(demoOverview(store));
+  if (path === "/audit-logs") return ok(store.auditLogs);
 
   if (path === "/customers" && method === "GET") {
     return ok(store.customers.map((customer) => ({
@@ -323,32 +399,89 @@ async function demoFetch<T>(path: string, init?: RequestInit & { token?: string 
 
   if (path === "/bookings" && method === "POST") {
     const customer = store.customers.find((item) => item.id === body.customerId) ?? store.customers[0];
+    const now = new Date().toISOString();
     const booking: Booking = {
       id: `BK-${Math.floor(1000 + Math.random() * 9000)}`,
       serviceType: body.serviceType,
       bookingDate: body.bookingDate,
       status: "PENDING",
+      createdAt: now,
+      updatedAt: now,
       customer: { companyName: customer?.companyName ?? "Current customer account", email: customer?.email ?? "customer@demo.local" },
       employee: null,
-      notes: body.notes
+      notes: body.notes,
+      activities: []
     };
+    booking.activities = [{
+      id: `act-${Date.now()}`,
+      bookingId: booking.id,
+      action: "Booking created",
+      detail: `${booking.serviceType} scheduled`,
+      createdAt: now,
+      actor: getSession()?.user ?? demoUsers[0]
+    }];
     store.bookings = [booking, ...store.bookings];
+    appendAuditLog(store, {
+      action: "Booking created",
+      entity: "Booking",
+      entityId: booking.id,
+      actor: getSession()?.user ?? demoUsers[0],
+      metadata: { status: booking.status }
+    });
     store.notifications = [{ id: `not-${Date.now()}`, type: "BOOKING_CREATED", message: `${booking.serviceType} booking created.`, readStatus: false, createdAt: new Date().toISOString() }, ...store.notifications];
     saveDemoStore(store);
     return ok(booking);
   }
 
+  const activityMatch = path.match(/^\/bookings\/(.+)\/activity$/);
+  if (activityMatch && method === "GET") {
+    const booking = store.bookings.find((item) => item.id === activityMatch[1]);
+    return ok(booking?.activities ?? []);
+  }
+
   const bookingMatch = path.match(/^\/bookings\/(.+)$/);
   if (bookingMatch && method === "PATCH") {
+    const before = store.bookings.find((booking) => booking.id === bookingMatch[1]);
     store.bookings = store.bookings.map((booking) => {
       if (booking.id !== bookingMatch[1]) return booking;
       const employee = body.employeeId ? demoUsers.find((user) => user.id === body.employeeId) : body.employeeId === null ? null : booking.employee;
       return {
         ...booking,
         ...body,
+        updatedAt: new Date().toISOString(),
         employee: employee ? { id: employee.id, name: employee.name, email: employee.email } : employee === null ? null : booking.employee
       };
     });
+    const after = store.bookings.find((booking) => booking.id === bookingMatch[1]);
+    if (after && before) {
+      const actor = getSession()?.user ?? demoUsers[0];
+      if (body.employeeId !== undefined) {
+        appendBookingActivity(store, after.id, {
+          action: body.employeeId ? "Employee assigned" : "Employee unassigned",
+          detail: body.employeeId ? after.employee?.name ?? "Assigned employee" : "Booking returned to the unassigned queue",
+          actor,
+          metadata: { employeeId: body.employeeId }
+        });
+      }
+      if (body.status && body.status !== before.status) {
+        appendBookingActivity(store, after.id, {
+          action: "Status changed",
+          detail: `${before.status} to ${body.status}`,
+          actor,
+          metadata: { from: before.status, to: body.status }
+        });
+      }
+      if (body.notes !== undefined && body.notes !== before.notes) {
+        appendBookingActivity(store, after.id, { action: "Notes updated", detail: body.notes || "Notes cleared", actor });
+      }
+      appendAuditLog(store, {
+        action: body.status === "COMPLETED" ? "Employee completed task" : body.employeeId ? "Admin assigned job" : "Booking updated",
+        entity: "Booking",
+        entityId: after.id,
+        actor,
+        metadata: body
+      });
+    }
     saveDemoStore(store);
     return ok({ success: true });
   }
@@ -372,13 +505,44 @@ async function demoFetch<T>(path: string, init?: RequestInit & { token?: string 
       booking
     };
     store.invoices = [invoice, ...store.invoices];
+    appendBookingActivity(store, invoice.bookingId, {
+      action: "Invoice created",
+      detail: `${invoice.status} invoice for ${invoice.amount} SEK`,
+      actor: getSession()?.user ?? demoUsers[0],
+      metadata: { invoiceId: invoice.id, status: invoice.status }
+    });
+    appendAuditLog(store, {
+      action: "Invoice generated",
+      entity: "Invoice",
+      entityId: invoice.id,
+      actor: getSession()?.user ?? demoUsers[0],
+      metadata: { bookingId: invoice.bookingId, status: invoice.status }
+    });
     saveDemoStore(store);
     return ok(invoice);
   }
 
   const invoiceMatch = path.match(/^\/invoices\/(.+)$/);
   if (invoiceMatch && method === "PATCH") {
+    const before = store.invoices.find((invoice) => invoice.id === invoiceMatch[1]);
     store.invoices = store.invoices.map((invoice) => invoice.id === invoiceMatch[1] ? { ...invoice, ...body } : invoice);
+    const after = store.invoices.find((invoice) => invoice.id === invoiceMatch[1]);
+    if (before && after && body.status && body.status !== before.status) {
+      const actor = getSession()?.user ?? demoUsers[0];
+      appendBookingActivity(store, after.bookingId, {
+        action: "Invoice status changed",
+        detail: `${before.status} to ${body.status}`,
+        actor,
+        metadata: { invoiceId: after.id, from: before.status, to: body.status }
+      });
+      appendAuditLog(store, {
+        action: "Invoice status changed",
+        entity: "Invoice",
+        entityId: after.id,
+        actor,
+        metadata: { from: before.status, to: body.status }
+      });
+    }
     saveDemoStore(store);
     return ok({ success: true });
   }

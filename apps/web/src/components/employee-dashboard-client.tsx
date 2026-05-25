@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Camera, CheckCircle2, ClipboardList } from "lucide-react";
+import Link from "next/link";
 import { API_URL, DEMO_MODE, apiFetch, authToken, Booking } from "@/lib/api";
 import { dateTime } from "@/lib/format";
 import { EmptyState, LoadingState } from "./booking-operations";
@@ -68,7 +69,9 @@ export function EmployeeDashboardClient() {
         <article key={booking.id} className="rounded border border-line bg-white p-5 shadow-panel">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <h2 className="text-lg font-semibold">{booking.serviceType}</h2>
+              <h2 className="text-lg font-semibold">
+                <Link className="text-brand hover:underline" href={`/bookings/${booking.id}`}>{booking.serviceType}</Link>
+              </h2>
               <p className="mt-1 text-sm text-slate-500">{booking.customer?.companyName}</p>
             </div>
             <span className="rounded bg-teal-50 px-2 py-1 text-xs font-semibold text-teal-700">{booking.status}</span>

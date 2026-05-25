@@ -1,4 +1,5 @@
-﻿import { dateTime } from "@/lib/format";
+import Link from "next/link";
+import { dateTime } from "@/lib/format";
 import type { Booking } from "@/lib/api";
 import { BookingStatusBadge, EmptyState, OperationalBadges } from "./booking-operations";
 
@@ -27,7 +28,11 @@ export function BookingTable({ bookings }: { bookings: Booking[] }) {
                 <span className="block font-medium">{booking.customer?.companyName ?? "Unassigned"}</span>
                 <span className="block text-xs text-slate-500 dark:text-slate-400">{booking.customer?.email}</span>
               </td>
-              <td className="px-4 py-4">{booking.serviceType}</td>
+              <td className="px-4 py-4">
+                <Link className="font-medium text-brand hover:underline" href={`/bookings/${booking.id}`}>
+                  {booking.serviceType}
+                </Link>
+              </td>
               <td className="px-4 py-4">{dateTime(booking.bookingDate)}</td>
               <td className="px-4 py-4">{booking.employee?.name ?? "Needs assignment"}</td>
               <td className="px-4 py-4"><BookingStatusBadge status={booking.status} /></td>

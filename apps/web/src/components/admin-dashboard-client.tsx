@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { CalendarCheck, CircleDollarSign, ClipboardCheck, SlidersHorizontal, Trash2, Users } from "lucide-react";
+import Link from "next/link";
 import { AnalyticsOverview, apiFetch, authToken, AuditLog, Booking, BookingStatus, User } from "@/lib/api";
 import { dateTime, money } from "@/lib/format";
 import { BookingActivityTimeline, BookingStatusBadge, EmptyState, LoadingState, OperationalBadges, bookingOperationalBadges } from "./booking-operations";
@@ -137,7 +138,9 @@ export function AdminDashboardClient() {
                 {visibleBookings.map((booking) => (
                   <tr key={booking.id} className={selectedBooking?.id === booking.id ? "bg-teal-50/60 dark:bg-teal-950/30" : "hover:bg-slate-50 dark:hover:bg-slate-800/70"} onClick={() => setSelectedId(booking.id)}>
                     <td className="px-4 py-4 font-medium">{booking.customer?.companyName}</td>
-                    <td className="px-4 py-4">{booking.serviceType}</td>
+                    <td className="px-4 py-4">
+                      <Link className="font-medium text-brand hover:underline" href={`/bookings/${booking.id}`}>{booking.serviceType}</Link>
+                    </td>
                     <td className="px-4 py-4">{dateTime(booking.bookingDate)}</td>
                     <td className="px-4 py-4" onClick={(event) => event.stopPropagation()}>
                       <select className="focus-ring h-9 rounded border border-line bg-white px-2 dark:bg-slate-950" value={booking.employee?.id ?? ""} onChange={(event) => patchBooking(booking.id, { employeeId: event.target.value || null, status: event.target.value ? "ASSIGNED" : booking.status })}>

@@ -61,12 +61,27 @@ npm run dev
 
 The web app runs at `http://localhost:3000` and the API runs at `http://localhost:4000`.
 
+For local development, the default `.env.example` expects PostgreSQL on `localhost:5432`. Start PostgreSQL first, then run the Prisma commands. If the database is empty, `npm run seed` creates the working roles, service catalog, a booking, invoice activity, notifications, and audit records used by the operations screens.
+
+On Windows PowerShell, use `npm.cmd` if script execution policy blocks `npm.ps1`:
+
+```powershell
+copy .env.example .env
+npm.cmd install
+npm.cmd run prisma:generate
+npm.cmd run prisma:migrate
+npm.cmd run seed
+npm.cmd run dev
+```
+
 ## Docker
 
 ```bash
 cp .env.example .env
 docker compose up --build
 ```
+
+The Compose stack starts PostgreSQL, the API, and the web service. Keep the database credentials in `.env` aligned with `docker-compose.yml` before running migrations or seed data.
 
 ## Workspace Accounts
 
@@ -106,11 +121,19 @@ npm run typecheck
 npm run lint
 ```
 
-API tests use Jest and Supertest. End-to-end booking flow coverage lives in `apps/web/cypress/e2e/booking-flow.cy.ts`.
+API tests use Jest and Supertest, including coverage for invoice lifecycle transitions, booking activity visibility, and booking update validation. End-to-end booking flow coverage lives in `apps/web/cypress/e2e/booking-flow.cy.ts`.
 
 ## Deployment
 
 The platform is ready for deployment to a VPS, Render, Railway, or DigitalOcean. Configure environment variables from `.env.example`, provision PostgreSQL, run Prisma migrations, then deploy the API and web containers.
+
+Operational deployment checklist:
+
+- Set `DATABASE_URL`, `JWT_ACCESS_SECRET`, `JWT_REFRESH_SECRET`, `WEB_ORIGIN`, `API_URL`, and `NEXT_PUBLIC_API_URL`.
+- Run `npm run prisma:generate` during build.
+- Run `npx prisma migrate deploy --schema apps/api/prisma/schema.prisma` against the production database.
+- Seed only when preparing a controlled demo or internal review environment.
+- Verify `/health`, login, booking creation, assignment, invoice status updates, and the booking activity timeline after release.
 
 ## Screenshots
 

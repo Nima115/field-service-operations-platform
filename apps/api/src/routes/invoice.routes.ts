@@ -1,4 +1,4 @@
-import { Router } from "express";
+﻿import { Router } from "express";
 import { requireAuth, requireRole } from "../middleware/auth.js";
 import { asyncHandler } from "../utils/http.js";
 import { z } from "zod";
@@ -19,7 +19,7 @@ invoiceRouter.post(
   "/",
   requireRole("ADMIN"),
   asyncHandler(async (req, res) => {
-    res.status(201).json(await createInvoice(req.body));
+    res.status(201).json(await createInvoice(req.body, req.user!));
   })
 );
 
@@ -28,7 +28,7 @@ invoiceRouter.patch(
   requireRole("ADMIN"),
   asyncHandler(async (req, res) => {
     const body = z.object({ status: z.enum(["DRAFT", "SENT", "PAID", "OVERDUE", "VOID"]) }).parse(req.body);
-    res.json(await updateInvoiceStatus(String(req.params.id), body.status));
+    res.json(await updateInvoiceStatus(String(req.params.id), body.status, req.user!));
   })
 );
 
@@ -42,3 +42,4 @@ invoiceRouter.get(
     res.send(pdf);
   })
 );
+

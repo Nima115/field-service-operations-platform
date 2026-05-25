@@ -1,7 +1,8 @@
-import { BookingStatus, Role } from "@prisma/client";
+﻿import { BookingStatus, Role } from "@prisma/client";
 import { z } from "zod";
 import { prisma } from "../config/prisma.js";
 import { AppError } from "../utils/http.js";
+import { recordAuditLog } from "./audit.service.js";
 import { createNotification } from "./notification.service.js";
 
 export const createBookingSchema = z.object({
@@ -17,6 +18,14 @@ export const updateBookingSchema = z.object({
   status: z.nativeEnum(BookingStatus).optional(),
   notes: z.string().optional()
 });
+
+export const bookingIncludes = {
+  customer: true,
+  employee: { select: { id: true, name: true, email: true, role: true } },
+  service: true,
+  invoices: true,
+  files: true
+};
 
 export async function createBooking(user: Express.User, input: z.infer<typeof createBookingSchema>) {
   const data = createBookingSchema.parse(input);
@@ -44,6 +53,14 @@ export async function createBooking(user: Express.User, input: z.infer<typeof cr
     include: bookingIncludes
   });
 
+  await recordAuditLog({
+    actorId: user.id,
+    action: "Booking created",
+    entity: "Booking",
+    entityId: booking.id,
+    metadata: { serviceType: booking.serviceType, status: booking.status }
+  });
+
   const customer = await prisma.customer.findUnique({
     where: { id: customerId },
     include: { user: true }
@@ -59,14 +76,6 @@ export async function createBooking(user: Express.User, input: z.infer<typeof cr
 
   return booking;
 }
-
-export const bookingIncludes = {
-  customer: true,
-  employee: { select: { id: true, name: true, email: true, role: true } },
-  service: true,
-  invoices: true,
-  files: true
-};
 
 export async function listBookings(user: Express.User) {
   return prisma.booking.findMany({
@@ -109,6 +118,14 @@ export async function updateBooking(
     include: bookingIncludes
   });
 
+  await recordAuditLog({
+    actorId: user.id,
+    action: data.status === "COMPLETED" ? "Employee completed task" : data.employeeId ? "Admin assigned job" : "Booking updated",
+    entity: "Booking",
+    entityId: updated.id,
+    metadata: data
+  });
+
   if (data.employeeId) {
     await createNotification({
       userId: data.employeeId,
@@ -132,6 +149,13 @@ export async function deleteBooking(user: Express.User, id: string) {
     throw new AppError(403, "You cannot delete this booking", "FORBIDDEN");
   }
 
+  await recordAuditLog({
+    actorId: user.id,
+    action: "Booking deleted",
+    entity: "Booking",
+    entityId: id,
+    metadata: { serviceType: booking.serviceType }
+  });
   await prisma.booking.delete({ where: { id } });
   return { message: "Booking deleted." };
 }

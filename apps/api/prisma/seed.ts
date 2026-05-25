@@ -1,4 +1,4 @@
-import dotenv from "dotenv";
+﻿import dotenv from "dotenv";
 import bcrypt from "bcryptjs";
 import { PrismaClient, Role } from "@prisma/client";
 
@@ -61,12 +61,19 @@ async function main() {
     }
   });
 
-  await prisma.invoice.create({
+  const invoice = await prisma.invoice.create({
     data: {
       bookingId: booking.id,
       amount: services[0].price,
       status: "SENT"
     }
+  });
+
+  await prisma.auditLog.createMany({
+    data: [
+      { actorId: admin.id, action: "Admin assigned job", entity: "Booking", entityId: booking.id, metadata: { employee: employee.name } },
+      { actorId: admin.id, action: "Invoice generated", entity: "Invoice", entityId: invoice.id, metadata: { status: "SENT" } }
+    ]
   });
 
   await prisma.notification.create({
@@ -87,3 +94,5 @@ main()
     await prisma.$disconnect();
     process.exit(1);
   });
+
+

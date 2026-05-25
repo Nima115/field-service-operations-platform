@@ -1,4 +1,4 @@
-import http from "node:http";
+﻿import http from "node:http";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import express from "express";
@@ -7,6 +7,7 @@ import rateLimit from "express-rate-limit";
 import { Server } from "socket.io";
 import { env } from "./config/env.js";
 import { analyticsRouter } from "./routes/analytics.routes.js";
+import { auditRouter } from "./routes/audit.routes.js";
 import { authRouter } from "./routes/auth.routes.js";
 import { bookingRouter } from "./routes/booking.routes.js";
 import { customerRouter } from "./routes/customer.routes.js";
@@ -36,6 +37,7 @@ export function createApp() {
   });
 
   app.use("/auth", authRouter);
+  app.use("/audit-logs", auditRouter);
   app.use("/bookings", bookingRouter);
   app.use("/customers", customerRouter);
   app.use("/invoices", invoiceRouter);
@@ -67,3 +69,5 @@ export function createHttpServer() {
 
   return { app, server, io };
 }
+
+

@@ -24,6 +24,17 @@ export async function recordBookingActivity(input: {
   });
 }
 
+export function canViewBookingActivity(
+  user: Pick<Express.User, "id" | "role">,
+  booking: { employeeId: string | null; customer: { userId: string | null } }
+) {
+  return (
+    user.role === Role.ADMIN ||
+    (user.role === Role.EMPLOYEE && booking.employeeId === user.id) ||
+    (user.role === Role.CUSTOMER && booking.customer.userId === user.id)
+  );
+}
+
 export async function listBookingActivities(user: Express.User, bookingId: string) {
   const booking = await prisma.booking.findUnique({
     where: { id: bookingId },
@@ -32,12 +43,9 @@ export async function listBookingActivities(user: Express.User, bookingId: strin
 
   if (!booking) throw new AppError(404, "Booking not found", "BOOKING_NOT_FOUND");
 
-  const canView =
-    user.role === Role.ADMIN ||
-    (user.role === Role.EMPLOYEE && booking.employeeId === user.id) ||
-    (user.role === Role.CUSTOMER && booking.customer.userId === user.id);
-
-  if (!canView) throw new AppError(403, "You cannot view this booking activity", "FORBIDDEN");
+  if (!canViewBookingActivity(user, booking)) {
+    throw new AppError(403, "You cannot view this booking activity", "FORBIDDEN");
+  }
 
   return prisma.bookingActivity.findMany({
     where: { bookingId },

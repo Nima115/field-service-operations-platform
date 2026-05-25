@@ -20,6 +20,10 @@ const allowedTransitions: Record<InvoiceStatus, InvoiceStatus[]> = {
   VOID: []
 };
 
+export function canTransitionInvoiceStatus(from: InvoiceStatus, to: InvoiceStatus) {
+  return from === to || allowedTransitions[from].includes(to);
+}
+
 export async function listInvoices(user?: Express.User) {
   return prisma.invoice.findMany({
     where:
@@ -74,7 +78,7 @@ export async function updateInvoiceStatus(id: string, status: z.infer<typeof inv
   const invoice = await prisma.invoice.findUnique({ where: { id } });
   if (!invoice) throw new AppError(404, "Invoice not found", "INVOICE_NOT_FOUND");
 
-  if (!allowedTransitions[invoice.status].includes(status) && invoice.status !== status) {
+  if (!canTransitionInvoiceStatus(invoice.status, status)) {
     throw new AppError(422, `Invoice cannot move from ${invoice.status} to ${status}`, "INVALID_INVOICE_TRANSITION");
   }
 
